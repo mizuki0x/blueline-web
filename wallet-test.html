@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Copa del Sol — Wallet Test (devnet)</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<style>
+  :root{--ember:#e0492a;--amber:#ff8a3a;--sun:#ffc63f;--pine:#123024;--green:#2f6a2c;
+    --cream:#fff6e6;--gold:#ffd94a;--ink:#1a1410}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;font-family:ui-monospace,"SF Mono",Menlo,monospace;color:var(--cream);
+    background:linear-gradient(160deg,var(--ember),var(--amber) 45%,var(--sun));
+    display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{width:100%;max-width:440px;background:var(--pine);border:3px solid var(--ink);
+    box-shadow:8px 8px 0 rgba(0,0,0,.35);padding:26px}
+  h1{font-size:18px;margin:0 0 2px;letter-spacing:.05em;color:var(--gold)}
+  .sub{font-size:11px;opacity:.7;margin:0 0 20px}
+  .badge{display:inline-block;font-size:10px;padding:2px 7px;background:var(--green);
+    border:2px solid var(--ink);margin-bottom:18px}
+  button{font:inherit;font-size:13px;width:100%;padding:13px;margin:7px 0;cursor:pointer;
+    background:var(--gold);color:var(--ink);border:3px solid var(--ink);
+    box-shadow:4px 4px 0 rgba(0,0,0,.35);transition:transform .05s}
+  button:active{transform:translate(4px,4px);box-shadow:0 0 0}
+  button:disabled{opacity:.4;cursor:not-allowed;box-shadow:4px 4px 0 rgba(0,0,0,.2)}
+  button.enter{background:var(--ember);color:var(--cream)}
+  .row{display:flex;justify-content:space-between;font-size:12px;padding:7px 0;
+    border-bottom:1px dashed rgba(255,255,255,.15)}
+  .row b{color:var(--sun);font-weight:600}
+  #log{margin-top:16px;font-size:10.5px;line-height:1.5;max-height:150px;overflow:auto;
+    background:rgba(0,0,0,.25);padding:10px;border:2px solid rgba(0,0,0,.4)}
+  #log .ok{color:#8fe388}#log .err{color:#ff9b8a}#log a{color:var(--sun)}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>COPA DEL SOL</h1>
+  <p class="sub">Paid-entry wallet test</p>
+  <span class="badge">DEVNET · CUP #12 · 0.01 ◎</span>
+
+  <div class="row"><span>Wallet</span><b id="w">not connected</b></div>
+  <div class="row"><span>Address</span><b id="addr">—</b></div>
+  <div class="row"><span>Balance</span><b id="bal">—</b></div>
+
+  <button id="connect">CONNECT WALLET</button>
+  <button id="enter" class="enter" disabled>ENTER CUP #12 · 0.01 ◎</button>
+
+  <div id="log"></div>
+</div>
+
+<script src="/wallet/web3.min.js"></script>
+<script src="/wallet/copa-chain.js"></script>
+<script src="/wallet/copa-wallet.js"></script>
+<script>
+  const RPC = 'https://api.devnet.solana.com';
+  const PROGRAM = 'BT9jkBjWwKHjeGjCKVtYWPAFyCyMPkEDpRK8XGGTr32T';
+  const CUP = 12;
+  const $ = (id) => document.getElementById(id);
+  const log = (msg, cls) => { const d = document.createElement('div'); if (cls) d.className = cls; d.innerHTML = msg; $('log').prepend(d); };
+
+  CopaWallet.init(RPC, PROGRAM);
+  if (!CopaWallet.detect()) log('No wallet detected — install Phantom or Solflare (set to Devnet).', 'err');
+
+  async function refresh() {
+    $('w').textContent = CopaWallet.walletName() || 'not connected';
+    if (CopaWallet.connected) {
+      const pk = CopaWallet.pubkey;
+      $('addr').textContent = pk.slice(0, 4) + '…' + pk.slice(-4);
+      $('bal').textContent = (await CopaWallet.solBalance()).toFixed(4) + ' ◎';
+      $('enter').disabled = false;
+    }
+  }
+
+  $('connect').onclick = async () => {
+    try {
+      log('Connecting…');
+      const pk = await CopaWallet.connect();
+      log('Connected: <b>' + pk + '</b>', 'ok');
+      await refresh();
+    } catch (e) { log('Connect failed: ' + e.message, 'err'); }
+  };
+
+  $('enter').onclick = async () => {
+    try {
+      $('enter').disabled = true;
+      log('Building register tx + requesting signature…');
+      const sig = await CopaWallet.enterCup(CUP, null);
+      log('✅ Entered cup #12! tx <a href="https://explorer.solana.com/tx/' + sig + '?cluster=devnet" target="_blank">' + sig.slice(0, 8) + '…</a>', 'ok');
+      await refresh();
+    } catch (e) {
+      log('Entry failed: ' + (e.message || e), 'err');
+      $('enter').disabled = false;
+    }
+  };
+</script>
+</body>
+</html>
