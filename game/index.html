@@ -6,8 +6,8 @@
 <title>Copa del Sol</title>
 
 <script type="module">
-import init, * as bindings from '/game/copa-client-93917b9cf468f620.js';
-const wasm = await init({ module_or_path: '/game/copa-client-93917b9cf468f620_bg.wasm' });
+import init, * as bindings from '/game/copa-client-dbe68941015b191c.js';
+const wasm = await init({ module_or_path: '/game/copa-client-dbe68941015b191c_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -21,11 +21,25 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
   canvas{display:block;outline:none}
   #boot{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
     color:#8d97a1;font:14px ui-monospace,Menlo,monospace;letter-spacing:.2em;text-transform:uppercase}
+  /* Online soak overlay: only shown for a ?room= visit. */
+  #soak{position:fixed;left:8px;top:8px;z-index:10;max-width:calc(100% - 16px);
+    padding:6px 9px;border-radius:6px;background:rgba(11,14,18,.82);color:#e7edf3;
+    font:12px ui-monospace,Menlo,monospace;line-height:1.5;white-space:pre-wrap;
+    pointer-events:none}
 </style>
-<link rel="modulepreload" href="/game/copa-client-93917b9cf468f620.js" crossorigin="anonymous" integrity="sha384-nOE0ofRn5/NHz3/BV9lkYVPSQhJs4rCYgIV6JsVItsbnScfB29ivxAbGj8RkEZ7R"><link rel="preload" href="/game/copa-client-93917b9cf468f620_bg.wasm" crossorigin="anonymous" integrity="sha384-QPzw6KVJmRU3gwz14qexxaAefa1hj1zd/I4+xcsLkgPSDkups5YS4zVCueF5ZHdz" as="fetch" type="application/wasm"></head>
+<link rel="modulepreload" href="/game/copa-client-dbe68941015b191c.js" crossorigin="anonymous" integrity="sha384-zTDNRrCJtq70eCR830fR/vQXVAS8Tcu+p3jZRDwZ0SUnvBjYn78hNR+lSj0u1CNL"><link rel="preload" href="/game/copa-client-dbe68941015b191c_bg.wasm" crossorigin="anonymous" integrity="sha384-FMy3l5oVvy289Ng+IHfbH5SiKcNjcVUiuRWe3Pv90RfiydXlI5ONQkHQAapfvIiF" as="fetch" type="application/wasm"></head>
 <body>
   <div id="boot">loading copa del sol…</div>
   <script>addEventListener('TrunkApplicationStarted',()=>{const b=document.getElementById('boot');if(b)b.remove();});</script>
+  <!-- Deploy-time runtime config: sets window.COPA_RPC (and optionally
+       window.COPA_PROGRAM_ID). GENERATED into dist/ at deploy from the host
+       env (HELIUS_API_KEY) and NEVER committed — a front-end RPC key must not
+       live in the repo or the wasm bundle. Absent in a bare local build (the
+       resolver below falls back to localnet). A front-end RPC key is
+       necessarily exposed to every visitor, so restrict it to the production
+       origin in the RPC provider dashboard; then a scraped key is inert from
+       any other site. See README and copa-config.example.js. -->
+  <script src="copa-config.js"></script>
   <script>
   // Chain feed: poll getProgramAccounts and hand complete snapshots to the
   // app through the wasm bridge (main.rs `feed_bridge`). This page is the
@@ -35,8 +49,40 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
   // ever drift, `copa_feed` rejects the frame whole and the app keeps its
   // last good snapshot. Nothing in this block may throw into the app.
   addEventListener('TrunkApplicationStarted', () => {
-    const rpc = new URLSearchParams(location.search).get('rpc')
-      || 'http://127.0.0.1:8899';
+    const params = new URLSearchParams(location.search);
+    // RPC endpoint, highest priority first:
+    //   ?rpc=<url>            per-visit override (devnet/localnet tests)
+    //   window.COPA_RPC       deploy-injected (production: Helius mainnet+key)
+    //   http://127.0.0.1:8899 localnet fallback for a bare local build
+    const rpc = params.get('rpc') || window.COPA_RPC || 'http://127.0.0.1:8899';
+    // Program id: an optional override (?program= / window.COPA_PROGRAM_ID)
+    // points one deployed bundle at a different `copa` deployment without a
+    // rebuild. It MUST reach Rust too — the app derives the config/results
+    // PDAs it address-binds from this same id — so hand any override across
+    // the wasm boundary FIRST, then read the active id back for the query.
+    // With no override both sides keep the compiled-in, drift-pinned copa::ID.
+    const programOverride = params.get('program') || window.COPA_PROGRAM_ID;
+    if (programOverride) {
+      try { window.wasmBindings.copa_set_program_id(programOverride); }
+      catch (e) { console.error('copa feed: ignoring bad program id override —', e); }
+    }
+    const programId = window.wasmBindings.copa_program_id();
+
+    // Signaling endpoint (the online-match WebRTC handshake host), highest
+    // priority first:
+    //   ?signaling=<url>            per-visit override (local: ws://127.0.0.1:3536)
+    //   window.COPA_SIGNALING       deploy-injected (production hosted matchbox server)
+    //   copa_default_signaling()    the compiled hosted default (Rust source of truth)
+    // The default lives in Rust (copa_netcode::matchbox::DEFAULT_SIGNALING) so the
+    // page never restates a URL. Resolved here + logged so a dev verifies the
+    // override today; the consumer of window.copaSignaling is the infra-gated
+    // GGRS WebRTC session (no live call site yet — the hosted wire-in).
+    const signaling = params.get('signaling')
+      || window.COPA_SIGNALING
+      || window.wasmBindings.copa_default_signaling();
+    console.info('copa signaling:', signaling);
+    window.copaSignaling = signaling;
+
     const BASE_MS = 2000;   // devnet-friendly poll; the Rust content gate
     const MAX_MS = 16000;   // makes identical polls near-free
     let wait = BASE_MS;
@@ -75,7 +121,7 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
           signal: AbortSignal.timeout(8000),
           body: JSON.stringify({
             jsonrpc: '2.0', id: 1, method: 'getProgramAccounts',
-            params: [window.wasmBindings.copa_program_id(),
+            params: [programId,
                      { encoding: 'base64', commitment: 'confirmed' }],
           }),
         });
@@ -101,6 +147,82 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
       setTimeout(poll, wait);
     }
     poll();
+  });
+  </script>
+  <script>
+  // Online match (the two-browser WAN path). A ?room=<id> visit dials the
+  // hosted signaling server and, once an opponent opens the SAME room, the app
+  // starts a rollback 1v1 — both peers derive the seed from the room URL, so no
+  // lobby is needed. This block is the transport/secret-handling surface: it
+  // fetches short-lived TURN credentials and hands them (plus the room URL) to
+  // the wasm connect (main.rs `copa_connect_online`); the rollback session,
+  // determinism, and record digest are all in transport-free Rust below it.
+  // The TURN api key is a FRONT-END key (safe to expose); the secret key is
+  // server-side only and never reaches here.
+  addEventListener('TrunkApplicationStarted', async () => {
+    const params = new URLSearchParams(location.search);
+    const room = params.get('room') || window.COPA_ROOM;
+    if (!room) return;  // no online match unless a room is named
+
+    const signaling = params.get('signaling')
+      || window.COPA_SIGNALING
+      || window.wasmBindings.copa_default_signaling();
+    const roomUrl = signaling.replace(/\/+$/, '') + '/' + encodeURIComponent(room);
+
+    // TURN relay (needed for cross-NAT, e.g. cellular↔wifi): fetch Metered's
+    // time-limited ICE set with the deploy-injected front-end key. Absent creds
+    // → empty strings → the Rust side runs STUN-only.
+    let turnUrls = '', turnUser = '', turnCred = '';
+    const mDomain = window.COPA_METERED_DOMAIN, mKey = window.COPA_METERED_API_KEY;
+    if (mDomain && mKey) {
+      try {
+        const r = await fetch(
+          `https://${mDomain}/api/v1/turn/credentials?apiKey=${encodeURIComponent(mKey)}`,
+          { signal: AbortSignal.timeout(8000) });
+        const ice = await r.json();
+        const urls = [];
+        for (const s of ice || []) {
+          if (typeof s.urls === 'string' && /^turns?:/i.test(s.urls)) {
+            urls.push(s.urls);
+            if (s.username) turnUser = s.username;
+            if (s.credential) turnCred = s.credential;
+          }
+        }
+        turnUrls = urls.join(',');
+      } catch (e) {
+        console.warn('copa online: TURN fetch failed, STUN-only —', e);
+      }
+    }
+    console.info('copa online: room', roomUrl, '· turn relays', turnUrls ? turnUrls.split(',').length : 0);
+    try {
+      window.wasmBindings.copa_connect_online(roomUrl, turnUrls, turnUser, turnCred);
+    } catch (e) {
+      console.error('copa online: connect failed —', e);
+    }
+
+    // Soak readout: poll the app's stats export and render the overlay. The
+    // record digest is the convergence proof — both devices must show the SAME
+    // digest at full time, with rollbacks > 0 and desyncs == 0.
+    const el = document.createElement('div');
+    el.id = 'soak';
+    el.textContent = 'online: connecting…';
+    document.body.appendChild(el);
+    let lastDigest = '';
+    setInterval(() => {
+      let s;
+      try { s = JSON.parse(window.wasmBindings.copa_online_stats()); }
+      catch { return; }
+      let line = `online · ${s.state}`;
+      if (s.ice) line += `\nice: ${s.ice}`;
+      if (s.seat !== null) {
+        line += `\nseat ${s.seat} · frame ${s.frame} · rollbacks ${s.rollbacks} · desyncs ${s.desyncs}`;
+      }
+      if (s.digest) {
+        line += `\ndigest ${s.digest.slice(0, 16)}…`;
+        if (s.digest !== lastDigest) { console.info('copa online record digest:', s.digest); lastDigest = s.digest; }
+      }
+      el.textContent = line;
+    }, 500);
   });
   </script>
 </body>
