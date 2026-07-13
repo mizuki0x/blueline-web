@@ -39,7 +39,7 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
        necessarily exposed to every visitor, so restrict it to the production
        origin in the RPC provider dashboard; then a scraped key is inert from
        any other site. See README and copa-config.example.js. -->
-  <script src="copa-config.js"></script>
+  <script src="/game/copa-config.js"></script>
   <script>
   // Chain feed: poll getProgramAccounts and hand complete snapshots to the
   // app through the wasm bridge (main.rs `feed_bridge`). This page is the
