@@ -21,6 +21,7 @@
 <meta name="twitter:site" content="@PlayCopaDelSol">
 <meta name="theme-color" content="#e0492a">
 <style>
+  @font-face{font-family:"Anton";font-style:normal;font-weight:400;font-display:swap;src:url("/fonts/anton.woff2") format("woff2")}
   :root{
     --ember:#e0492a; --amber:#ff8a3a; --gold:#ffd23f; --gold2:#ff9e2e; --sun:#ffc63f;
     --grass:#6bbe4a; --grass2:#57a03c; --grassd:#2f6a2c; --pine:#123024; --pine2:#0d2419; --pine3:#17422b;
@@ -31,6 +32,7 @@
     --maxw:1160px;
     --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --display:"Anton",var(--sans);
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -42,8 +44,8 @@
   .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
   .wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 22px}
   .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--ember);margin:0 0 14px;font-weight:700}
-  h2{font-size:clamp(27px,4.2vw,42px);line-height:1.05;letter-spacing:-.02em;margin:0 0 14px;font-weight:800;color:var(--pine)}
-  h3{font-size:19px;margin:0 0 6px;font-weight:800;letter-spacing:-.01em;color:var(--pine)}
+  h2{font-family:var(--display);font-style:italic;font-size:clamp(31px,4.8vw,50px);line-height:1.02;letter-spacing:0;margin:0 0 14px;color:var(--pine)}
+  h3{font-family:var(--display);font-style:italic;font-size:22px;line-height:1.1;letter-spacing:0;margin:0 0 6px;color:var(--pine)}
   p{margin:0 0 14px;color:var(--muted)}
   section{position:relative;padding:84px 0}
   .lead{font-size:18px;max-width:46ch}
