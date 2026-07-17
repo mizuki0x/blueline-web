@@ -86,38 +86,42 @@
   .nav__in>.brand{justify-self:start}
   .nav__in>.btn{justify-self:end}
   .brand{display:flex;align-items:center;gap:11px;font-size:19px}
+  .brand-mark{height:26px;width:auto;display:block}
   .nav__links{display:flex;align-items:center;gap:26px}
-  .nav__links a{font-size:13px;color:rgba(255,255,255,.9);font-weight:700;text-transform:uppercase;letter-spacing:.06em;transition:color .15s;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+  .nav__links a{font-size:13px;color:var(--ink);font-weight:700;text-transform:uppercase;letter-spacing:.06em;transition:color .15s}
+  header.nav.scrolled .nav__links a{color:rgba(255,255,255,.9)}
   .nav__links a:hover{color:var(--sky)}
   .nav__links a svg{display:block}
   @media(max-width:860px){.nav__links{display:none}}
 
   /* hero — rink at night */
-  .hero{padding:124px 0 82px;position:relative;overflow:hidden;color:#fff;background:#060912}
+  .hero{padding:124px 0 82px;position:relative;overflow:hidden;color:var(--ink);background:#eef3ff}
   .hero__deco{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
   .hero__deco::before{content:"";position:absolute;inset:-1px;
-    background-image:linear-gradient(rgba(53,82,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(53,82,255,.08) 1px,transparent 1px);
-    background-size:46px 46px;animation:gridpan 7s linear infinite;
-    -webkit-mask:radial-gradient(125% 80% at 50% -10%,#000 32%,transparent 100%);mask:radial-gradient(125% 80% at 50% -10%,#000 32%,transparent 100%)}
-  @keyframes gridpan{to{background-position:46px 46px}}
-  .hero__deco .bl{position:absolute;top:0;height:100%;width:8px;background:var(--blue);opacity:.32}
-  .hero__deco .bl.l{left:33%}
-  .hero__deco .bl.r{left:63%}
-  .hero__deco .rc{position:absolute;top:0;left:48%;height:100%;width:4px;background:var(--red);opacity:.4}
-  .hero__spot{position:absolute;top:0;left:0;width:620px;height:620px;margin:-310px 0 0 -310px;border-radius:50%;pointer-events:none;z-index:1;opacity:0;transition:opacity .5s ease;mix-blend-mode:screen;background:radial-gradient(circle,rgba(53,82,255,.40),rgba(53,82,255,.10) 44%,transparent 66%);will-change:transform}
-  .hero.spot-on .hero__spot{opacity:1}
+    background-image:linear-gradient(rgba(53,82,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(53,82,255,.12) 1px,transparent 1px);
+    background-size:34px 34px;animation:gridpan 7s linear infinite}
+  @keyframes gridpan{to{background-position:34px 34px}}
+  .hero__deco .bl{position:absolute;top:0;height:100%;width:9px;background:var(--blue);opacity:.45}
+  .hero__deco .bl.l{left:35%}
+  .hero__deco .bl.r{left:65%}
+  .hero__deco .rc{position:absolute;top:0;left:50%;height:100%;width:4px;background:var(--red);opacity:.4}
+  .hero__puck{position:absolute;top:0;left:0;pointer-events:none;z-index:3;opacity:0;transition:opacity .35s ease;will-change:transform}
+  .hero.puck-on .hero__puck{opacity:1}
+  .hero__puck i{display:block;width:46px;height:34px;margin:-17px 0 0 -23px;background:url("/puck.png") center/contain no-repeat;image-rendering:pixelated;filter:drop-shadow(0 4px 5px rgba(10,18,48,.3))}
+  .hero.puck-on .hero__puck i{animation:puckIn .5s steps(5)}
+  @keyframes puckIn{from{opacity:.2;transform:scale(.15)}to{opacity:1;transform:scale(1)}}
   .hero__grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;align-items:center;position:relative;z-index:2}
   .badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;
-    letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(53,82,255,.16);
-    border:2px solid var(--blue-lite);box-shadow:3px 3px 0 0 rgba(0,0,0,.35);padding:7px 13px;margin-bottom:22px;font-weight:700}
+    letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:#fff;
+    border:2px solid var(--blue);box-shadow:3px 3px 0 0 var(--shadow-i);padding:7px 13px;margin-bottom:22px;font-weight:700}
   .badge .dot{width:7px;height:7px;background:#39e07a;box-shadow:0 0 0 0 rgba(57,224,122,.6);animation:pulse 1.9s infinite;border-radius:50%}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(57,224,122,.5)}70%{box-shadow:0 0 0 7px rgba(57,224,122,0)}100%{box-shadow:0 0 0 0 rgba(57,224,122,0)}}
-  .hero-h1{font-family:var(--display);font-style:italic;font-size:69px;line-height:1;letter-spacing:0;text-transform:uppercase;margin:0 0 20px;color:#fff}
+  .hero-h1{font-family:var(--display);font-style:italic;font-size:69px;line-height:1;letter-spacing:0;text-transform:uppercase;margin:0 0 20px;color:var(--ink)}
   @media(max-width:680px){.hero-h1{font-size:44px}}
-  .hero p.tag{font-size:19px;max-width:44ch;color:rgba(226,233,255,.9);font-weight:500}
+  .hero p.tag{font-size:19px;max-width:44ch;color:var(--muted);font-weight:500}
   .hero__cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:26px}
-  .trust{display:flex;gap:22px;flex-wrap:wrap;margin-top:28px;color:rgba(226,233,255,.86);font-size:13px}
-  .trust b{font-weight:800;color:#fff}
+  .trust{display:flex;gap:22px;flex-wrap:wrap;margin-top:28px;color:var(--muted);font-size:13px}
+  .trust b{font-weight:800;color:var(--ink)}
 
   /* arcade cabinet screen */
   .screen{position:relative;padding:15px;background:linear-gradient(160deg,#1a2350,#0b1024);
@@ -196,7 +200,7 @@
   /* token */
   .token{display:grid;grid-template-columns:.85fr 1.15fr;gap:40px;align-items:center;background:var(--arena2);
     border:3px solid #05091c;box-shadow:10px 10px 0 0 rgba(0,0,0,.35);padding:40px;color:#fff}
-  .token .tk-emblem{width:100%;max-width:320px;margin:0 auto;border-radius:8px;border:2px solid rgba(53,82,255,.55);box-shadow:0 16px 34px rgba(0,0,0,.55)}
+  .token .tk-emblem{width:100%;max-width:320px;height:auto;aspect-ratio:1/1;object-fit:contain;margin:0 auto;border-radius:8px;border:2px solid rgba(53,82,255,.55);box-shadow:0 16px 34px rgba(0,0,0,.55)}
   .token h2{color:#fff}.token p{color:rgba(226,233,255,.82)}
   .chip{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#fff;background:var(--blue);padding:6px 12px;margin-bottom:16px;font-weight:800;border:2px solid var(--blue-dd)}
   .token ul{list-style:none;margin:16px 0 0;padding:0}
@@ -206,18 +210,19 @@
   @media(max-width:760px){.token{grid-template-columns:1fr;padding:26px;text-align:center}.token .tk-emblem{width:140px}.token li{text-align:left}}
 
   /* roadmap */
-  .road{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-  @media(max-width:760px){.road{grid-template-columns:1fr}}
-  .road .card{background:var(--arena2);border-color:#05091c;box-shadow:6px 6px 0 0 rgba(0,0,0,.3)}
-  .road .card h3,.road .card li{color:#fff}
-  .road .when{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--sky);margin-bottom:12px;font-weight:800}
-  .road ul{list-style:none;margin:0;padding:0;font-size:15px}
-  .road li{padding:8px 0;color:rgba(226,233,255,.85);display:flex;gap:10px}
-  .road li::before{content:"▪";color:var(--blue-lite)}
-  .road .now .when{color:#39e07a}
-  .road .now li::before{content:"●";color:#39e07a}
-  .road .drop .when{color:var(--red)}
-  .road .drop li::before{content:"●";color:var(--red)}
+  .road{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative;margin-top:26px}
+  .road::before{content:"";position:absolute;top:8px;left:9%;right:9%;height:2px;background:rgba(125,144,255,.22)}
+  @media(max-width:760px){.road{grid-template-columns:1fr;gap:30px}.road::before{display:none}}
+  .phase{position:relative;padding:38px 24px 0}
+  .phase__node{position:absolute;top:0;left:24px;width:18px;height:18px;border-radius:50%;background:var(--arena2);border:3px solid var(--sky);box-shadow:0 0 0 5px var(--arena)}
+  .phase.is-live .phase__node{background:#39e07a;border-color:#39e07a}
+  .phase.is-launch .phase__node{background:var(--red);border-color:var(--red)}
+  .phase__tag{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--sky);font-weight:800;margin-bottom:16px}
+  .phase.is-live .phase__tag{color:#39e07a}
+  .phase.is-launch .phase__tag{color:var(--red)}
+  .phase ul{list-style:none;margin:0;padding:0}
+  .phase li{padding:11px 0;color:rgba(226,233,255,.88);font-size:15px;border-top:1px solid rgba(255,255,255,.09)}
+  .phase li:first-child{border-top:none}
 
   /* final cta */
   .cta-final{text-align:center;background:var(--blue);color:#fff}
@@ -229,7 +234,7 @@
   /* footer */
   footer{color:#fff;padding:46px 0 38px;background:var(--arena);border-top:4px solid var(--blue)}
   .foot{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:flex-start}
-  .foot .wm{font-size:26px}
+  .foot .brand-mark{height:30px}
   .foot p{color:rgba(226,233,255,.66)}
   .foot__links{display:flex;gap:44px;flex-wrap:wrap}
   .foot__links h4{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--sky);margin:0 0 12px;font-weight:800}
@@ -243,7 +248,7 @@
   @media(prefers-reduced-motion:reduce){
     .reveal{opacity:1;transform:none;transition:none}
     .marquee__track,.badge .dot,.hero__deco::before{animation:none}html{scroll-behavior:auto}
-    .hero__spot{display:none}
+    .hero__puck{display:none}
   }
 </style>
 </head>
@@ -251,7 +256,7 @@
 
 <header class="nav" id="nav">
   <div class="wrap nav__in">
-    <a class="brand" href="#top" aria-label="Blue Line"><span class="wm"><b>blue line</b></span></a>
+    <a class="brand" href="#top" aria-label="Blue Line"><img class="brand-mark" src="/wordmark.png" alt="Blue Line" width="1530" height="220"></a>
     <nav class="nav__links">
       <a href="#play">Play</a><a href="#fights">Fights</a><a href="#modes">Modes</a><a href="#clubs">Clubs</a><a href="#onchain">Onchain</a><a href="#token">$BLINE</a>
       <a href="https://x.com/BlueLineBase" target="_blank" rel="noopener" aria-label="Blue Line on X"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
@@ -264,7 +269,7 @@
   <section class="hero">
     <div class="hero__deco">
       <div class="bl l"></div><div class="rc"></div><div class="bl r"></div>
-      <div class="hero__spot" id="heroSpot"></div>
+      <div class="hero__puck" id="heroPuck"><i></i></div>
     </div>
     <div class="wrap hero__grid">
       <div>
@@ -273,7 +278,7 @@
         <p class="tag">Fast, skill-based arcade hockey. Pick your club, play head-to-head for real USDC, and drop the gloves when it counts — every match deterministic and verifiable onchain.</p>
         <div class="hero__cta">
           <a class="btn btn--play" href="#cta">Get early access</a>
-          <a class="btn btn--ghostw" href="#play">How it works</a>
+          <a class="btn btn--ghost" href="#play">How it works</a>
         </div>
         <div class="trust"><div><b>Free</b> 1v1 in-browser</div><div><b>Real USDC</b> on Base</div><div><b>Verifiable</b> onchain</div></div>
       </div>
@@ -405,9 +410,9 @@
     <div class="wrap">
       <div class="sec-head reveal"><p class="eyebrow">The road ahead</p><h2>Where Blue Line is headed</h2></div>
       <div class="road">
-        <div class="card reveal now"><div class="when">Live now</div><ul><li>Free 1v1 prototype</li><li>Pixel arcade engine</li><li>Boards, caroms &amp; fights core</li></ul></div>
-        <div class="card reveal"><div class="when">Next</div><ul><li>USDC 1v1 on Base</li><li>Blue Line Cup brackets</li><li>Clubs &amp; $BLINE on Clanker</li></ul></div>
-        <div class="card reveal drop"><div class="when">Next week</div><ul><li>Full public launch</li><li>Real-money cups open</li><li>Leaderboards &amp; seasons</li></ul></div>
+        <div class="phase reveal is-live"><div class="phase__node"></div><div class="phase__tag">Live now</div><ul><li>Free 1v1 prototype</li><li>Pixel arcade engine</li><li>Boards, caroms &amp; fights core</li></ul></div>
+        <div class="phase reveal"><div class="phase__node"></div><div class="phase__tag">In build</div><ul><li>USDC 1v1 on Base</li><li>Blue Line Cup brackets</li><li>Clubs &amp; $BLINE on Clanker</li></ul></div>
+        <div class="phase reveal is-launch"><div class="phase__node"></div><div class="phase__tag">Launch · next week</div><ul><li>Full public launch</li><li>Real-money cups open</li><li>Leaderboards &amp; seasons</li></ul></div>
       </div>
     </div>
   </section>
@@ -429,7 +434,7 @@
   <div class="wrap">
     <div class="foot">
       <div style="max-width:320px">
-        <a class="brand" href="#top"><span class="wm"><b>blue line</b></span></a>
+        <a class="brand" href="#top"><img class="brand-mark" src="/wordmark.png" alt="Blue Line" width="1530" height="220"></a>
         <p style="margin-top:16px;font-size:14px">Onchain arcade hockey on Base. Pick your club, drop the gloves, settle it on the ice.</p>
       </div>
       <div class="foot__links">
@@ -457,14 +462,14 @@
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
   (function(){
-    const hero=document.querySelector('.hero'),spot=document.getElementById('heroSpot');
-    if(!hero||!spot||matchMedia('(prefers-reduced-motion:reduce)').matches||matchMedia('(hover:none)').matches)return;
+    const hero=document.querySelector('.hero'),puck=document.getElementById('heroPuck');
+    if(!hero||!puck||matchMedia('(prefers-reduced-motion:reduce)').matches||matchMedia('(hover:none)').matches)return;
     let tx=0,ty=0,cx=0,cy=0,raf=0;
     hero.addEventListener('mousemove',e=>{const r=hero.getBoundingClientRect();tx=e.clientX-r.left;ty=e.clientY-r.top;
-      if(!hero.classList.contains('spot-on')){hero.classList.add('spot-on');cx=tx;cy=ty;}
+      if(!hero.classList.contains('puck-on')){hero.classList.add('puck-on');cx=tx;cy=ty;}
       if(!raf)raf=requestAnimationFrame(tick);},{passive:true});
-    hero.addEventListener('mouseleave',()=>hero.classList.remove('spot-on'));
-    function tick(){cx+=(tx-cx)*0.14;cy+=(ty-cy)*0.14;spot.style.transform='translate('+cx+'px,'+cy+'px)';
+    hero.addEventListener('mouseleave',()=>hero.classList.remove('puck-on'));
+    function tick(){cx+=(tx-cx)*0.16;cy+=(ty-cy)*0.16;puck.style.transform='translate('+cx+'px,'+cy+'px)';
       if(Math.abs(tx-cx)>0.4||Math.abs(ty-cy)>0.4)raf=requestAnimationFrame(tick);else raf=0;}
   })();
 
@@ -542,22 +547,13 @@
       else{px(bx+1,top,6,2,P.hair);px(bx+1,top-1,6,1,P.hair);}
       if(face==='left')px(bx+2,top+3,1,1,P.dark);else if(face==='right')px(bx+5,top+3,1,1,P.dark);
       else{px(bx+2,top+3,1,1,P.dark);px(bx+5,top+3,1,1,P.dark);}}
-    function goalie(gx,left){const dir=left?1:-1,fx=gx+dir*4,fy=gy(),BK='#0b0d16',TR='#e8edff';
-      g.fillStyle='rgba(10,18,48,.34)';g.beginPath();g.ellipse(fx,fy+5,12,3,0,0,7);g.fill();
-      // butterfly leg pads — wide, square, flared at the base (calf-kneed crouch)
-      px(fx-6,fy-1,5,5,BK);px(fx+1,fy-1,5,5,BK);
-      px(fx-8,fy+2,7,3,BK);px(fx+1,fy+2,7,3,BK);
-      px(fx-5,fy-1,1,6,TR);px(fx+3,fy-1,1,6,TR);
-      px(fx-8,fy+5,7,1,P.dark);px(fx+1,fy+5,7,1,P.dark);
-      // bulky square chest + shoulders, low and wide
-      px(fx-7,fy-8,14,7,BK);px(fx-7,fy-8,14,1,TR);px(fx-1,fy-6,2,3,P.steel);
-      // blocker + trapper out to the sides
-      px(fx-9,fy-7,2,5,BK);px(fx+7,fy-7,2,5,BK);
-      g.fillStyle=BK;g.beginPath();g.arc(fx+dir*9,fy-4,3,0,7);g.fill();
-      // low masked head, short neck (squat, not tall)
-      px(fx-2,fy-11,5,4,BK);px(fx-2,fy-11,5,1,TR);px(fx-1,fy-9,3,1,TR);
-      // paddle on the ice
-      px(fx+dir*3,fy+3,dir*8,2,P.stick);}
+    function goalie(gx,left){const dir=left?1:-1,fx=gx+dir*4,fy=gy(),BK='#0b0d16',TR='#dfe6ff';
+      g.fillStyle='rgba(10,18,48,.30)';g.beginPath();g.ellipse(fx,fy+5,8,2.6,0,0,7);g.fill();
+      px(fx-5,fy-1,4,6,BK);px(fx+1,fy-1,4,6,BK);
+      px(fx-4,fy-1,1,6,TR);px(fx+2,fy-1,1,6,TR);
+      px(fx-5,fy-7,10,6,BK);px(fx-5,fy-7,10,1,TR);
+      px(fx+dir*5,fy-6,2,4,BK);
+      px(fx-2,fy-11,5,4,BK);px(fx-2,fy-11,5,1,TR);px(fx-1,fy-9,3,1,TR);}
     let gyv=cy;const gy=()=>gyv;
     function puck(x,y,h){g.fillStyle='rgba(10,18,48,.25)';g.beginPath();g.ellipse(x,y,3,1.4,0,0,7);g.fill();
       px(x-2,y-2-h,4,3,P.puck);px(x-2,y-2-h,4,1,'#33384a');}
