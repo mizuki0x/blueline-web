@@ -188,9 +188,10 @@
   /* clubs */
   .clubs{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px}
   @media(max-width:820px){.clubs{grid-template-columns:repeat(2,1fr)}}
-  .club{display:flex;align-items:center;gap:12px;background:var(--white);border:2px solid var(--ink);box-shadow:4px 4px 0 0 var(--shadow-i);padding:13px 15px}
-  .club .crest{width:30px;height:30px;flex:none;border:2px solid var(--ink);transform:skewX(-9deg)}
-  .club .cn{line-height:1.15}
+  .club{display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;background:var(--white);border:2px solid var(--ink);box-shadow:4px 4px 0 0 var(--shadow-i);padding:16px 12px 14px;transition:transform .12s ease,box-shadow .12s ease}
+  .club:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 0 var(--shadow-i)}
+  .club .crest{width:auto;height:96px;display:block;flex:none}
+  .club .cn{line-height:1.12}
   .club .city{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
   .club .team{font-family:var(--display);font-style:italic;font-size:17px;text-transform:uppercase;color:var(--ink)}
 
@@ -352,22 +353,22 @@
         <p>Every hockey city, every rivalry — from the Original Six to today. Choose your team, wear its colors, and defend them on the ice.</p>
       </div>
       <div class="clubs">
-        <div class="club reveal"><span class="crest" style="background:#ffb81c"></span><div class="cn"><div class="city">Boston</div><div class="team">Bruins</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#00205b"></span><div class="cn"><div class="city">Toronto</div><div class="team">Maple Leafs</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#af1e2d"></span><div class="cn"><div class="city">Montréal</div><div class="team">Canadiens</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#ce1126"></span><div class="cn"><div class="city">Detroit</div><div class="team">Red Wings</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#cf0a2c"></span><div class="cn"><div class="city">Chicago</div><div class="team">Blackhawks</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#0038a8"></span><div class="cn"><div class="city">New York</div><div class="team">Rangers</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#fcb514"></span><div class="cn"><div class="city">Pittsburgh</div><div class="team">Penguins</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#f74902"></span><div class="cn"><div class="city">Philadelphia</div><div class="team">Flyers</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#154734"></span><div class="cn"><div class="city">Minnesota</div><div class="team">Wild</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#6f263d"></span><div class="cn"><div class="city">Colorado</div><div class="team">Avalanche</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#00843d"></span><div class="cn"><div class="city">Vancouver</div><div class="team">Canucks</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#ff4c00"></span><div class="cn"><div class="city">Edmonton</div><div class="team">Oilers</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#c8102e"></span><div class="cn"><div class="city">Calgary</div><div class="team">Flames</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#041e42"></span><div class="cn"><div class="city">Winnipeg</div><div class="team">Jets</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#003087"></span><div class="cn"><div class="city">Buffalo</div><div class="team">Sabres</div></div></div>
-        <div class="club reveal"><span class="crest" style="background:#c52032"></span><div class="cn"><div class="city">Ottawa</div><div class="team">Senators</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/boston.webp" alt="Boston Bruins crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Boston</div><div class="team">Bruins</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/toronto.webp" alt="Toronto Maple Leafs crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Toronto</div><div class="team">Maple Leafs</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/montreal.webp" alt="Montréal Canadiens crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Montréal</div><div class="team">Canadiens</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/detroit.webp" alt="Detroit Red Wings crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Detroit</div><div class="team">Red Wings</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/chicago.webp" alt="Chicago Blackhawks crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Chicago</div><div class="team">Blackhawks</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/newyork.webp" alt="New York Rangers crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">New York</div><div class="team">Rangers</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/pittsburgh.webp" alt="Pittsburgh Penguins crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Pittsburgh</div><div class="team">Penguins</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/philadelphia.webp" alt="Philadelphia Flyers crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Philadelphia</div><div class="team">Flyers</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/minnesota.webp" alt="Minnesota Wild crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Minnesota</div><div class="team">Wild</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/colorado.webp" alt="Colorado Avalanche crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Colorado</div><div class="team">Avalanche</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/vancouver.webp" alt="Vancouver Canucks crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Vancouver</div><div class="team">Canucks</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/edmonton.webp" alt="Edmonton Oilers crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Edmonton</div><div class="team">Oilers</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/calgary.webp" alt="Calgary Flames crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Calgary</div><div class="team">Flames</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/winnipeg.webp" alt="Winnipeg Jets crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Winnipeg</div><div class="team">Jets</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/buffalo.webp" alt="Buffalo Sabres crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Buffalo</div><div class="team">Sabres</div></div></div>
+        <div class="club reveal"><img class="crest" src="/clubs/ottawa.webp" alt="Ottawa Senators crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Ottawa</div><div class="team">Senators</div></div></div>
       </div>
     </div>
   </section>
