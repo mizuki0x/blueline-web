@@ -1,6 +1,6 @@
 {
-  "name": "Blue Line",
-  "short_name": "Blue Line",
+  "name": "The Blue Line",
+  "short_name": "The Blue Line",
   "description": "Onchain arcade hockey on Base. Play free.",
   "start_url": "/",
   "display": "standalone",
