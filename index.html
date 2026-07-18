@@ -186,14 +186,25 @@
   .flag{position:absolute;top:15px;right:-34px;transform:rotate(45deg);background:var(--red);color:#fff;font-size:11px;font-weight:800;letter-spacing:.08em;padding:5px 36px;text-transform:uppercase}
 
   /* clubs */
-  .clubs{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px}
-  @media(max-width:820px){.clubs{grid-template-columns:repeat(2,1fr)}}
-  .club{display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;background:var(--white);border:2px solid var(--ink);box-shadow:4px 4px 0 0 var(--shadow-i);padding:16px 12px 14px;transition:transform .12s ease,box-shadow .12s ease}
+  #clubs{overflow:hidden}
+  .club-carousel{position:relative;width:100%;overflow:hidden;padding:8px 0 16px}
+  .club-carousel::before,.club-carousel::after{content:"";position:absolute;inset:0 auto 0 0;z-index:2;width:clamp(28px,7vw,110px);pointer-events:none;background:linear-gradient(90deg,var(--ice),transparent)}
+  .club-carousel::after{inset:0 0 0 auto;transform:scaleX(-1)}
+  .club-carousel__track{display:flex;width:max-content;will-change:transform}
+  .club-carousel__track.is-ready{animation:club-scroll 48s linear infinite}
+  .club-carousel:hover .club-carousel__track{animation-play-state:paused}
+  .clubs{display:flex;flex:none;gap:18px;padding:4px 18px 8px 0}
+  .club{width:clamp(184px,16vw,224px);flex:none;display:flex;flex-direction:column;align-items:center;text-align:center;gap:11px;background:var(--white);border:2px solid var(--ink);box-shadow:4px 4px 0 0 var(--shadow-i);padding:20px 14px 17px;transition:transform .12s ease,box-shadow .12s ease}
   .club:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 0 var(--shadow-i)}
-  .club .crest{width:auto;height:96px;display:block;flex:none}
+  .club .crest{width:auto;height:120px;display:block;flex:none}
   .club .cn{line-height:1.12}
   .club .city{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
   .club .team{font-family:var(--display);font-style:italic;font-size:17px;text-transform:uppercase;color:var(--ink)}
+  @keyframes club-scroll{to{transform:translateX(-50%)}}
+  @media(max-width:600px){
+    .club{width:164px;padding:16px 10px 14px}
+    .club .crest{height:96px}
+  }
 
   /* onchain rows */
   .feat{display:flex;gap:16px;align-items:flex-start;padding:20px;border:3px solid var(--ink);background:var(--white);box-shadow:5px 5px 0 0 var(--shadow-i)}
@@ -251,7 +262,9 @@
   .reveal.in{opacity:1;transform:none}
   @media(prefers-reduced-motion:reduce){
     .reveal{opacity:1;transform:none;transition:none}
-    .marquee__track,.badge .dot,.hero__deco::before{animation:none}html{scroll-behavior:auto}
+    .marquee__track,.club-carousel__track,.badge .dot,.hero__deco::before{animation:none}html{scroll-behavior:auto}
+    .club-carousel{overflow-x:auto;scrollbar-width:thin}
+    .club-carousel::before,.club-carousel::after{display:none}
     .hero__puck{display:none}
   }
 </style>
@@ -352,23 +365,27 @@
         <h2>Skate as your favorite club.</h2>
         <p>Every hockey city, every rivalry — from the Original Six to today. The roster is revealed here, with selectable in-game clubs planned for an upcoming beta update.</p>
       </div>
-      <div class="clubs">
-        <div class="club reveal"><img class="crest" src="/clubs/boston.webp" alt="Boston Bruins crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Boston</div><div class="team">Bruins</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/toronto.webp" alt="Toronto Maple Leafs crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Toronto</div><div class="team">Maple Leafs</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/montreal.webp" alt="Montréal Canadiens crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Montréal</div><div class="team">Canadiens</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/detroit.webp" alt="Detroit Red Wings crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Detroit</div><div class="team">Red Wings</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/chicago.webp" alt="Chicago Blackhawks crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Chicago</div><div class="team">Blackhawks</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/newyork.webp" alt="New York Rangers crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">New York</div><div class="team">Rangers</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/pittsburgh.webp" alt="Pittsburgh Penguins crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Pittsburgh</div><div class="team">Penguins</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/philadelphia.webp" alt="Philadelphia Flyers crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Philadelphia</div><div class="team">Flyers</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/minnesota.webp" alt="Minnesota Wild crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Minnesota</div><div class="team">Wild</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/colorado.webp" alt="Colorado Avalanche crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Colorado</div><div class="team">Avalanche</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/vancouver.webp" alt="Vancouver Canucks crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Vancouver</div><div class="team">Canucks</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/edmonton.webp" alt="Edmonton Oilers crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Edmonton</div><div class="team">Oilers</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/calgary.webp" alt="Calgary Flames crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Calgary</div><div class="team">Flames</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/winnipeg.webp" alt="Winnipeg Jets crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Winnipeg</div><div class="team">Jets</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/buffalo.webp" alt="Buffalo Sabres crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Buffalo</div><div class="team">Sabres</div></div></div>
-        <div class="club reveal"><img class="crest" src="/clubs/ottawa.webp" alt="Ottawa Senators crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Ottawa</div><div class="team">Senators</div></div></div>
+    </div>
+    <div class="club-carousel reveal" role="region" aria-label="Club roster carousel">
+      <div class="club-carousel__track">
+        <div class="clubs">
+          <div class="club"><img class="crest" src="/clubs/boston.webp" alt="Boston Bruins crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Boston</div><div class="team">Bruins</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/toronto.webp" alt="Toronto Maple Leafs crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Toronto</div><div class="team">Maple Leafs</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/montreal.webp" alt="Montréal Canadiens crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Montréal</div><div class="team">Canadiens</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/detroit.webp" alt="Detroit Red Wings crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Detroit</div><div class="team">Red Wings</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/chicago.webp" alt="Chicago Blackhawks crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Chicago</div><div class="team">Blackhawks</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/newyork.webp" alt="New York Rangers crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">New York</div><div class="team">Rangers</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/pittsburgh.webp" alt="Pittsburgh Penguins crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Pittsburgh</div><div class="team">Penguins</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/philadelphia.webp" alt="Philadelphia Flyers crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Philadelphia</div><div class="team">Flyers</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/minnesota.webp" alt="Minnesota Wild crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Minnesota</div><div class="team">Wild</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/colorado.webp" alt="Colorado Avalanche crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Colorado</div><div class="team">Avalanche</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/vancouver.webp" alt="Vancouver Canucks crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Vancouver</div><div class="team">Canucks</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/edmonton.webp" alt="Edmonton Oilers crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Edmonton</div><div class="team">Oilers</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/calgary.webp" alt="Calgary Flames crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Calgary</div><div class="team">Flames</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/winnipeg.webp" alt="Winnipeg Jets crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Winnipeg</div><div class="team">Jets</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/buffalo.webp" alt="Buffalo Sabres crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Buffalo</div><div class="team">Sabres</div></div></div>
+          <div class="club"><img class="crest" src="/clubs/ottawa.webp" alt="Ottawa Senators crest" width="256" height="256" loading="lazy" decoding="async"><div class="cn"><div class="city">Ottawa</div><div class="team">Senators</div></div></div>
+        </div>
       </div>
     </div>
   </section>
@@ -461,6 +478,16 @@
   const items=[['Free to play'],['Drop the gloves'],['USDC in build'],['Provably fair'],['Club roster'],['Blue Line Cup'],['Built on Base']];
   const build=()=>items.map(([a,b])=>`<span>${a}${b?' <b>'+b+'</b>':''}</span><span class="sep"></span>`).join('');
   const marqHalf=build().repeat(4);document.getElementById('marq').innerHTML=marqHalf+marqHalf;
+
+  const clubTrack=document.querySelector('.club-carousel__track');
+  const clubSet=clubTrack&&clubTrack.querySelector('.clubs');
+  if(clubTrack&&clubSet&&!matchMedia('(prefers-reduced-motion:reduce)').matches){
+    const clone=clubSet.cloneNode(true);
+    clone.setAttribute('aria-hidden','true');
+    clone.querySelectorAll('img').forEach(img=>img.alt='');
+    clubTrack.appendChild(clone);
+    clubTrack.classList.add('is-ready');
+  }
 
   const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
