@@ -4,7 +4,13 @@ import { dirname, extname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const htmlFiles = ["index.html", "game/index.html"];
+const htmlFiles = [
+  "index.html",
+  "game/index.html",
+  "paid/index.html",
+  "rules/index.html",
+  "privacy/index.html",
+];
 const required = [
   "robots.txt",
   "sitemap.xml",
@@ -83,7 +89,7 @@ if (demo.readUInt32BE(16) !== 1500 || demo.readUInt32BE(20) !== 500) {
   fail("hero demo must be 1500x500");
 }
 
-const ignored = new Set([".git", ".playwright-cli", "output"]);
+const ignored = new Set([".git", ".playwright-cli", "node_modules", "output"]);
 const textExtensions = new Set([".html", ".js", ".json", ".md", ".txt", ".xml", ".yaml", ".yml"]);
 const leakPatterns = [
   ["absolute home path", /\/Users\//],

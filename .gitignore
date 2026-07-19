@@ -1,4 +1,6 @@
 .DS_Store
+node_modules/
+paid/paid.js
 .playwright-cli/
 .render-token
 .renderctl.json

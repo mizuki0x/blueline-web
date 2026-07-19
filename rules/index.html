@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Paid Match Rules | The Blue Line</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<style>
+body{margin:0;background:#eef3ff;color:#0a1230;font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}main{width:min(760px,calc(100% - 40px));margin:48px auto 80px;background:#fff;border:3px solid #0a1230;box-shadow:8px 8px 0 rgba(10,18,48,.3);padding:34px}h1,h2{line-height:1.1}h1{font-size:40px;text-transform:uppercase}h2{margin-top:30px;font-size:20px}a{color:#0000ff;font-weight:700}.back{display:inline-block;margin-bottom:20px}.date{font-family:ui-monospace,Menlo,monospace;color:#5b6790}
+</style>
+</head>
+<body><main>
+<a class="back" href="/paid/">← Paid matchmaking</a>
+<h1>Paid match rules</h1>
+<p class="date">Effective July 19, 2026</p>
+<p>The Blue Line paid mode is a head-to-head skill competition. Each player controls their skater in the same deterministic game simulation. No random draw selects the winner.</p>
+<h2>Eligibility</h2>
+<p>You must be at least 18 and legally permitted to enter a paid skill competition where you are located. Do not enter from a jurisdiction that prohibits or restricts this activity. You are responsible for your wallet, taxes, and compliance with local law.</p>
+<h2>Entry and payout</h2>
+<p>Both players stake the displayed amount of Base USDC into the published escrow contract. The launch cap is 1 USDC per player. A decisive match pays the pot to the winner less the rake shown before entry. The current rake is 2.5% of the pot. A draw returns each player’s stake without rake.</p>
+<h2>Result</h2>
+<p>The service witnesses the confirmed rollback input stream and re-simulates its canonical replay. An authorized settlement wallet submits the derived winner and replay digest to the escrow. A client-reported score is never accepted as the result.</p>
+<h2>Cancellation, disconnects, and refunds</h2>
+<p>Seat A can reclaim an escrow that Seat B never funds. After both seats fund, the match is final unless it draws, settles, or reaches the escrow’s locked refund deadline. If the service does not settle within six hours of funding, either participant can call the contract’s expiry refund and each receives their stake back. Network interruptions can pause or prevent play; they do not let the operator redirect escrow funds.</p>
+<h2>Fair play</h2>
+<p>Do not automate controls, tamper with the client or protocol, coordinate a false replay, exploit a defect, or interfere with another player or the service. Matches linked to abuse may be blocked from future matchmaking, without removing either participant’s onchain refund rights.</p>
+<h2>Risk</h2>
+<p>Wallet transactions are irreversible and Base network fees apply. Smart contracts, wallets, networks, and software can fail. Review the transaction, stake, opponent, contract address, rake, and refund window before signing.</p>
+<h2>Support</h2>
+<p>For a stuck match, include the public match or transaction ID and contact <a href="mailto:hello@bluelinegame.com">hello@bluelinegame.com</a>. Never send a seed phrase or private key.</p>
+</main></body>
+</html>

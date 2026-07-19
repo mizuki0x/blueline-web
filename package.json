@@ -1,0 +1,17 @@
+{
+  "name": "blue-line-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/paid.js --bundle --minify --outfile=paid/paid.js",
+    "check": "node scripts/verify-site.mjs"
+  },
+  "dependencies": {
+    "@reown/appkit": "^1.8.18",
+    "@reown/appkit-adapter-ethers": "^1.8.18",
+    "ethers": "^6.16.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.11"
+  }
+}

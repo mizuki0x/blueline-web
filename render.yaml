@@ -3,7 +3,7 @@ services:
     name: Blue Line
     runtime: static
     branch: main
-    buildCommand: ""
+    buildCommand: npm ci && npm run build
     staticPublishPath: .
     autoDeployTrigger: checksPass
     domains:
