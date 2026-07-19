@@ -68,6 +68,19 @@ if (!/select\s*\{[\s\S]*?\n\s*appearance:\s*none/.test(formStyles)) {
   fail("shared form styles must disable native select appearance");
 }
 
+const homeHtml = readFileSync(join(root, "index.html"), "utf8");
+if (
+  !homeHtml.includes(
+    '<span class="hero-h1__line">Drop the gloves.</span><span class="hero-h1__line">Settle it onchain.</span>',
+  ) ||
+  !/\.hero-h1__line\{[^}]*white-space:nowrap/.test(homeHtml)
+) {
+  fail("hero headline must render as two locked lines");
+}
+if (!/\.club \.crest\{[^}]*width:200px;[^}]*height:200px/.test(homeHtml)) {
+  fail("club crests must render at 200px");
+}
+
 const manifest = JSON.parse(readFileSync(join(root, "site.webmanifest"), "utf8"));
 for (const icon of manifest.icons ?? []) {
   if (!existsSync(sitePath("site.webmanifest", icon.src))) {
