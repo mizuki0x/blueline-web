@@ -4,12 +4,14 @@ import { base } from '@reown/appkit/networks'
 import { BrowserProvider, Contract } from 'ethers'
 
 import { formatUsdc, parseUsdc } from './stake.js'
+import { clubLabel, validateRoster } from './clubs.js'
 
 const API = window.BLUE_LINE_PAID_API || 'https://blue-line-paid.onrender.com'
 const PROJECT_ID = '05127cba9dfa263ef6c85ff020515276'
 const SESSION_KEY = 'blue-line-paid-session'
 const MATCH_KEY = 'blue-line-paid-match'
 const SEARCH_KEY = 'blue-line-paid-search'
+const CLUB_KEY = 'blue-line-paid-club'
 
 const erc20Abi = [
   'function allowance(address owner,address spender) view returns (uint256)',
@@ -48,6 +50,7 @@ const ui = {
   action: document.querySelector('#action'),
   leave: document.querySelector('#leave'),
   stake: document.querySelector('#stake'),
+  clubs: document.querySelector('#clubs'),
   terms: document.querySelector('#terms'),
   status: document.querySelector('#status'),
   detail: document.querySelector('#detail'),
@@ -58,6 +61,8 @@ let session = readJson(SESSION_KEY)
 let wallet = {}
 let network = {}
 let config
+let clubs = []
+let selectedClub = localStorage.getItem(CLUB_KEY)
 let match
 let searching = sessionStorage.getItem(SEARCH_KEY) === '1'
 let pollTimer
@@ -79,11 +84,24 @@ ui.stake.addEventListener('input', () => {
   ui.stake.removeAttribute('aria-invalid')
   if (!match) render()
 })
+ui.clubs.addEventListener('change', event => {
+  if (event.target.name !== 'club') return
+  selectedClub = event.target.value
+  localStorage.setItem(CLUB_KEY, selectedClub)
+  render()
+})
 addEventListener('pageshow', boot)
 
 async function boot() {
   try {
-    config = await request('/v1/config')
+    const [nextConfig, roster] = await Promise.all([
+      request('/v1/config'),
+      request('/v1/clubs'),
+    ])
+    config = nextConfig
+    clubs = validateRoster(roster)
+    if (!clubs.some(club => club.slug === selectedClub)) selectedClub = clubs[0].slug
+    renderClubs()
     if (session?.expiresAt && Date.parse(session.expiresAt) <= Date.now()) {
       clearSession()
     }
@@ -119,10 +137,11 @@ async function act() {
     if (!match) {
       if (!ui.terms.checked) throw new Error('Confirm the match terms before joining.')
       const stake = parseUsdc(ui.stake.value)
+      if (!selectedClub) throw new Error('Choose a club before joining.')
       const result = await request('/v1/queue', {
         method: 'POST',
         auth: true,
-        body: { stake },
+        body: { stake, club: selectedClub },
       })
       match = result.match || null
       searching = !match
@@ -326,6 +345,7 @@ function render() {
   ui.leave.hidden = !searching
   ui.stake.disabled = Boolean(match) || busy
   ui.terms.disabled = Boolean(match) || busy
+  for (const input of ui.clubs.querySelectorAll('input')) input.disabled = Boolean(match) || busy || searching
   ui.action.disabled = busy
 
   if (!wallet.isConnected) {
@@ -344,7 +364,8 @@ function render() {
     try {
       const stake = parseUsdc(ui.stake.value)
       ui.stake.setAttribute('aria-invalid', 'false')
-      setDetail(`Stake per player: ${formatUsdc(stake)} USDC on Base.`)
+      const club = clubs.find(candidate => candidate.slug === selectedClub)
+      setDetail(`${club ? clubLabel(club) : 'Choose a club'} · ${formatUsdc(stake)} USDC per player on Base.`)
     } catch (error) {
       ui.stake.setAttribute('aria-invalid', 'true')
       setDetail(error.message)
@@ -353,7 +374,7 @@ function render() {
   }
 
   const opponent = `${match.opponent.slice(0, 6)}…${match.opponent.slice(-4)}`
-  setDetail(`Seat ${match.seat === 0 ? 'A' : 'B'} · opponent ${opponent} · ${formatUsdc(match.stake)} USDC each`)
+  setDetail(`${clubLabel(match.club)} vs ${clubLabel(match.opponentClub)} · opponent ${opponent} · ${formatUsdc(match.stake)} USDC each`)
   if (match.state === 'paired') {
     ui.action.textContent = match.seat === 0 ? 'Approve & open escrow' : 'Waiting for seat A…'
     ui.action.disabled = busy || match.seat !== 0
@@ -377,6 +398,30 @@ function render() {
     renderReceipt()
   }
   if (match.error) setStatus(match.error, true)
+}
+
+function renderClubs() {
+  ui.clubs.replaceChildren(...clubs.map(club => {
+    const label = document.createElement('label')
+    label.className = 'club-option'
+    const input = document.createElement('input')
+    input.type = 'radio'
+    input.name = 'club'
+    input.value = club.slug
+    input.checked = club.slug === selectedClub
+    const card = document.createElement('span')
+    card.className = 'club-card'
+    const crest = document.createElement('img')
+    crest.src = `/clubs/${club.crest}.webp`
+    crest.alt = ''
+    crest.width = 52
+    crest.height = 52
+    const name = document.createElement('span')
+    name.innerHTML = `<span>${club.city}</span><b>${club.name}</b>`
+    card.append(crest, name)
+    label.append(input, card)
+    return label
+  }))
 }
 
 function renderReceipt() {

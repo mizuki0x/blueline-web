@@ -6,8 +6,8 @@
 <title>The Blue Line</title>
 
 <script type="module">
-import init, * as bindings from '/game/copa-client-3598126c1df34f12.js';
-const wasm = await init({ module_or_path: '/game/copa-client-3598126c1df34f12_bg.wasm' });
+import init, * as bindings from '/game/copa-client-2b4e398cc809631f.js';
+const wasm = await init({ module_or_path: '/game/copa-client-2b4e398cc809631f_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -30,6 +30,16 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
     padding:8px 11px;border:2px solid #3552ff;background:rgba(7,11,28,.9);color:#fff;
     font:12px ui-monospace,Menlo,monospace;line-height:1.5;white-space:pre-wrap}
   #paid a{color:#8da0ff;font-weight:700}
+  #matchup{position:fixed;top:8px;left:50%;z-index:10;display:flex;align-items:center;
+    gap:12px;transform:translateX(-50%);padding:6px 12px;border:2px solid #e7edf3;
+    background:rgba(7,11,28,.92);color:#fff;font:800 11px ui-monospace,Menlo,monospace;
+    text-transform:uppercase;letter-spacing:.05em;pointer-events:none}
+  #matchup .club{display:flex;align-items:center;gap:7px;min-width:150px}
+  #matchup .club:last-child{flex-direction:row-reverse;text-align:right}
+  #matchup img{width:42px;height:42px;object-fit:contain}
+  #matchup b{display:block;font-size:12px}
+  #matchup span{display:block;color:#9eacd6;font-size:9px}
+  #matchup .versus{color:#ff4a3d;font-size:12px}
   #desktop-note{display:none}
   @media (any-pointer:coarse) and (max-width:900px){
     #desktop-note{position:fixed;inset:0;z-index:20;display:flex;align-items:center;
@@ -43,7 +53,7 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
   }
 </style>
 <link rel="stylesheet" href="/site.css">
-<link rel="modulepreload" href="/game/copa-client-3598126c1df34f12.js" crossorigin="anonymous" integrity="sha384-SJLBsY6vOlqYrZxH2/R+yTALVqiJGBe0N1fstQ38jHRIrDVeixDYgh8hQoCp8Srd"><link rel="preload" href="/game/copa-client-3598126c1df34f12_bg.wasm" crossorigin="anonymous" integrity="sha384-7pMpawLX40c7nlfWELLzAJkK5UaCrLRDWttgGoqq/PjWrasXjO248U7fesI+ZLLq" as="fetch" type="application/wasm"></head>
+<link rel="modulepreload" href="/game/copa-client-2b4e398cc809631f.js" crossorigin="anonymous" integrity="sha384-j3G27geEJIIZBZN3lxd9fI5RgY8r0s2uW6qNYj1Asohqxwoh2Vy+u2/q1lyXhIR2"><link rel="preload" href="/game/copa-client-2b4e398cc809631f_bg.wasm" crossorigin="anonymous" integrity="sha384-5+u24r/8/UpvWdY5+vfEiEayawWEXynkfzfdEanJo/SAPJNfnExqJ/m8lW+4GEoM" as="fetch" type="application/wasm"></head>
 <body>
   <div id="boot">loading the blue line…</div>
   <div id="desktop-note">
@@ -191,9 +201,33 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
     el.id = 'paid';
     el.textContent = 'paid match · preparing witness…';
     document.body.appendChild(el);
+    const matchup = document.createElement('div');
+    matchup.id = 'matchup';
+    const clubNode = club => {
+      const node = document.createElement('div');
+      node.className = 'club';
+      const crest = document.createElement('img');
+      crest.src = `/clubs/${club.crest}.webp`;
+      crest.alt = '';
+      const label = document.createElement('div');
+      const city = document.createElement('span');
+      city.textContent = club.city;
+      const name = document.createElement('b');
+      name.textContent = club.name;
+      label.append(city, name);
+      node.append(crest, label);
+      return node;
+    };
+    const versus = document.createElement('div');
+    versus.className = 'versus';
+    versus.textContent = 'vs';
+    matchup.append(clubNode(binding.match.clubA), versus, clubNode(binding.match.clubB));
+    document.body.appendChild(matchup);
     let match = binding.match;
     let uploaded = false;
     let uploading = false;
+    let uploadedClip = 0;
+    let uploadingClip = false;
     let started = false;
 
     const api = async (path, options = {}) => {
@@ -223,6 +257,8 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
         BigInt(match.seed),
         match.seatA,
         match.seatB,
+        match.clubA.id,
+        match.clubB.id,
       );
       started = true;
     };
@@ -244,6 +280,25 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
       }
     };
 
+    const uploadGoalClip = async () => {
+      if (uploadingClip) return;
+      const seq = window.wasmBindings.copa_goal_gif_seq();
+      if (!seq || seq === uploadedClip) return;
+      const clip = window.wasmBindings.copa_take_goal_gif();
+      if (!clip?.length) return;
+      uploadingClip = true;
+      try {
+        await api(`/v1/matches/${match.id}/clip`, {
+          method: 'POST',
+          headers: { 'content-type': 'image/gif' },
+          body: clip,
+        });
+        uploadedClip = seq;
+      } finally {
+        uploadingClip = false;
+      }
+    };
+
     const poll = async () => {
       try {
         if (!started) await connect();
@@ -257,6 +312,7 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
             line += `\nreplay ${stats.digest.slice(0, 16)}…`;
             await uploadReplay();
           }
+          await uploadGoalClip();
           match = await api(`/v1/matches/${match.id}`);
           if (match.state === 'settled') {
             const receipt = match.settlementTx
